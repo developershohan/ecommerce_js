@@ -1,6 +1,6 @@
 import axios from "axios";
+
 const rightContainer = document.querySelector(".rightContainer");
-// const baseUrl = 'https://dummyjson.com/products'
 
 const getProducts = async () => {
   try {
@@ -10,7 +10,7 @@ const getProducts = async () => {
 
     let content = "";
     if (products.length > 0) {
-      products.map((item, index) => {
+      products.forEach((item) => {
         content += `
          <div class="cardItem" id="card${item.id}">
           <div class="productImage">
@@ -19,7 +19,6 @@ const getProducts = async () => {
           <div class="productDescription">
             <h2>${item.title}</h2>
             <p>
-          
               ${item.description}
             </p>
           </div>
@@ -29,11 +28,11 @@ const getProducts = async () => {
           <div class="productStock">
             <p>Stock:<span class="productStockValue"> ${item.stock}</span></p>
           </div>
-            <div class="stockElement">
-              <button class="cartIncrement">+</button>
-              <p class="productQuantity">1</p>
-              <button class="cartDecrement">-</button>
-            </div>
+          <div class="stockElement">
+            <button class="cartIncrement">+</button>
+            <p class="productQuantity" data-quantity="1">1</p>
+            <button class="cartDecrement">-</button>
+          </div>
           <button class="add-to-cart-button">
             <i class="fa-solid fa-cart-shopping"></i> Add To Cart
           </button>
@@ -47,22 +46,33 @@ const getProducts = async () => {
     rightContainer.innerHTML = content;
 
     // manage quantity
-    const stock = document
-      .querySelector(".stockElement")
-      .addEventListener("click", (e) => {
-        if (e.target.classList.contains("cartIncrement")) {
-          const quantity = parseInt(e.target.nextElementSibling.textContent);
-          e.target.nextElementSibling.textContent = quantity + 1;
-        } else if (e.target.classList.contains("cartDecrement")) {
-          const quantity = parseInt(
-            e.target.previousElementSibling.textContent
-          );
-          if (quantity > 1) {
-            e.target.previousElementSibling.textContent = quantity - 1;
-          }
+    products.forEach((product) => {
+      const currentCardElement = document.querySelector(`#card${product.id}`);
+      const productQuantity =
+        currentCardElement.querySelector(".productQuantity");
+      const incrementButton =
+        currentCardElement.querySelector(".cartIncrement");
+      const decrementButton =
+        currentCardElement.querySelector(".cartDecrement");
+
+      incrementButton.addEventListener("click", () => {
+        let quantity = parseInt(productQuantity.getAttribute("data-quantity"));
+        if (quantity < product.stock) {
+          quantity += 1;
+          productQuantity.setAttribute("data-quantity", quantity);
+          productQuantity.innerText = quantity;
         }
       });
-    console.log(stock);
+
+      decrementButton.addEventListener("click", () => {
+        let quantity = parseInt(productQuantity.getAttribute("data-quantity"));
+        if (quantity > 1) {
+          quantity -= 1;
+          productQuantity.setAttribute("data-quantity", quantity);
+          productQuantity.innerText = quantity;
+        }
+      });
+    });
   } catch (errors) {
     console.error(errors);
   }
