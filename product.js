@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getCartProductFromLS } from "./getCartProductFromLS";
 
 const rightContainer = document.querySelector(".rightContainer");
 
@@ -45,15 +46,19 @@ const getProducts = async () => {
 
     rightContainer.innerHTML = content;
 
-    // manage quantity
+    // manage quantity and add to cart
     products.forEach((product) => {
       const currentCardElement = document.querySelector(`#card${product.id}`);
+
       const productQuantity =
         currentCardElement.querySelector(".productQuantity");
       const incrementButton =
         currentCardElement.querySelector(".cartIncrement");
       const decrementButton =
         currentCardElement.querySelector(".cartDecrement");
+      const addToCartButton = currentCardElement.querySelector(
+        ".add-to-cart-button"
+      );
 
       incrementButton.addEventListener("click", () => {
         let quantity = parseInt(productQuantity.getAttribute("data-quantity"));
@@ -71,6 +76,24 @@ const getProducts = async () => {
           productQuantity.setAttribute("data-quantity", quantity);
           productQuantity.innerText = quantity;
         }
+      });
+
+      addToCartButton.addEventListener("click", () => {
+        let arrLocalStorageProduct = getCartProductFromLS(product);
+        let currentQuantity =
+          currentCardElement.querySelector(".productQuantity").innerText;
+        let currentPrice =
+          currentCardElement.querySelector(".productPrice").innerText;
+        currentPrice = currentPrice.replace("$", "");
+        currentQuantity = Number(currentQuantity);
+        currentPrice = Number(currentPrice * currentQuantity);
+
+        arrLocalStorageProduct.push({ currentQuantity, currentPrice });
+        localStorage.setItem(
+          "cartProductLS",
+          JSON.stringify(arrLocalStorageProduct)
+        );
+        console.log(currentCardElement, currentQuantity, currentPrice);
       });
     });
   } catch (errors) {
