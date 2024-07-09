@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getCartProductFromLS } from "./getCartProductFromLS";
+import { updateCartValue } from "./updateCartValue";
 
 const rightContainer = document.querySelector(".rightContainer");
 
@@ -79,21 +80,36 @@ const getProducts = async () => {
       });
 
       addToCartButton.addEventListener("click", () => {
-        let arrLocalStorageProduct = getCartProductFromLS(product);
-        let currentQuantity =
+        let arrLocalStorageProduct = getCartProductFromLS();
+        let quantity =
           currentCardElement.querySelector(".productQuantity").innerText;
-        let currentPrice =
-          currentCardElement.querySelector(".productPrice").innerText;
-        currentPrice = currentPrice.replace("$", "");
-        currentQuantity = Number(currentQuantity);
-        currentPrice = Number(currentPrice * currentQuantity);
+        let price = currentCardElement.querySelector(".productPrice").innerText;
+        price = price.replace("$", "");
+        quantity = Number(quantity);
+        price = Number(price * quantity);
 
-        arrLocalStorageProduct.push({ currentQuantity, currentPrice });
+        let existingItem = arrLocalStorageProduct.find(
+          (item) => item.id === product.id
+        );
+
+        if (existingItem) {
+          return false;
+        }
+
+        const productDetails = {
+          id: product.id,
+          name: product.title,
+          quantity,
+          price,
+        };
+
+        arrLocalStorageProduct.push(productDetails);
         localStorage.setItem(
           "cartProductLS",
           JSON.stringify(arrLocalStorageProduct)
         );
-        console.log(currentCardElement, currentQuantity, currentPrice);
+        updateCartValue(arrLocalStorageProduct);
+        console.log(currentCardElement, productDetails);
       });
     });
   } catch (errors) {
