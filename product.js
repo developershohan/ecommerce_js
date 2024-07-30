@@ -81,6 +81,7 @@ const getProducts = async () => {
 
       addToCartButton.addEventListener("click", () => {
         let arrLocalStorageProduct = getCartProductFromLS();
+
         let quantity =
           currentCardElement.querySelector(".productQuantity").innerText;
         let price = currentCardElement.querySelector(".productPrice").innerText;
@@ -93,23 +94,29 @@ const getProducts = async () => {
         );
 
         if (existingItem) {
-          return false;
+          if (quantity > 1) {
+            existingItem.quantity += quantity;
+            existingItem.price += price;
+            localStorage.setItem(
+              "cartProductLS",
+              JSON.stringify(arrLocalStorageProduct)
+            );
+            updateCartValue(arrLocalStorageProduct);
+          }
+        } else {
+          const productDetails = {
+            id: product.id,
+            name: product.title,
+            quantity,
+            price,
+          };
+          arrLocalStorageProduct.push(productDetails);
+          localStorage.setItem(
+            "cartProductLS",
+            JSON.stringify(arrLocalStorageProduct)
+          );
+          updateCartValue(arrLocalStorageProduct);
         }
-
-        const productDetails = {
-          id: product.id,
-          name: product.title,
-          quantity,
-          price,
-        };
-
-        arrLocalStorageProduct.push(productDetails);
-        localStorage.setItem(
-          "cartProductLS",
-          JSON.stringify(arrLocalStorageProduct)
-        );
-        updateCartValue(arrLocalStorageProduct);
-        console.log(currentCardElement, productDetails);
       });
     });
   } catch (errors) {
