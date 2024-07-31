@@ -1,0 +1,33 @@
+
+.container{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+.cart_container{
+    width: 100%;
+    display: flex;
+    gap: 2rem;
+    flex-direction: column;
+}
+.cart_list{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: aliceblue;
+
+}
+.summery_order{
+    width: 50%;
+}
+.final_total,.tax,.subtotal{
+    display: flex;
+    justify-content: space-between;
+}
+.product_img{
+    width: 100px;
+    height: 100px;
+}
+.product_name{
+    font-size: 18px;
+}
