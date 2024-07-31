@@ -39,7 +39,7 @@ try {
     `;
     });
   } else {
-    console.log("No products found");
+    content += `No products found`;
   }
 
   cart_container.innerHTML = content;
@@ -49,13 +49,11 @@ try {
     button.addEventListener("click", () => {
       const cartList = button.closest(".cart_list");
       const id = cartList.dataset.id;
-      console.log(id); // This will log the data-id of the cart_list
-
-      // Remove the item from localStorage
+  
       let arrLocalStorageProduct = getCartProductFromLS();
-      console.log(arrLocalStorageProduct);
+
       let cartProducts = arrLocalStorageProduct.filter(
-        (curProduct) => curProduct.id !== parseInt(id) // Ensure the comparison is correct
+        (curProduct) => curProduct.id !== parseInt(id) 
       );
       localStorage.setItem("cartProductLS", JSON.stringify(cartProducts));
 
