@@ -1,6 +1,8 @@
 import { fetchQPFromCartLs } from "./fetchQPFromCartLs";
 import { getCartProductFromLS } from "./getCartProductFromLS";
 import axios from "axios";
+import { incrementDecrement } from "./incrementDecrement";
+import { updateTotalPrice } from "./updateTotalPrice";
 
 const cart_container = document.querySelector(".cart_container");
 let arrLocalStorageProduct = getCartProductFromLS();
@@ -23,7 +25,7 @@ try {
       const lsActualData = fetchQPFromCartLs(item.id, item.price);
 
       content += `
-      <div class="cart_list" data-id="${item.id}">
+      <div class="cart_list" data-id="${item.id}" data-stock="${item.stock}" data-price="${item.price}">
         <img class="product_img" src="${item.thumbnail}" alt="${item.title}" />
         <h1 class="product_name">${item.title}</h1>
         <h3 class="product_price">$${lsActualData.price}</h3>
@@ -61,6 +63,21 @@ try {
       cartList.remove();
     });
   });
+
+  const stockElements = document.querySelectorAll(".stockElement");
+  stockElements.forEach(stockElement => {
+    stockElement.addEventListener("click", (e) => {
+      const productElement = e.target.closest(".cart_list");
+      const id = productElement.dataset.id;
+      const stock = parseInt(productElement.dataset.stock);
+      const price = parseFloat(productElement.dataset.price);
+      
+      incrementDecrement(e, id, stock, price);
+    });
+  });
+  
+
 } catch (errors) {
   console.error(errors);
 }
+updateTotalPrice()
